@@ -17,6 +17,9 @@
     + 根據作業系統選擇適當的版本下載。
     + 例如 [Python 3.7.7 Windows x86-64 executable installer](https://www.python.org/ftp/python/3.7.7/python-3.7.7-amd64.exe)。
 
+### 取得憑證
++ 使用自己的 Google 帳號，根據[這個頁面](https://developers.google.com/calendar/quickstart/python)的 Step 1 獲得 `credentials.json` 的檔案。
+
 ### 環境部署
 + 開啟命令列安裝 `pipenv` 套件
     + `py -m pip install pipenv`
@@ -27,13 +30,14 @@
         + 編輯「使用者變數」那一個區塊裡面名稱為 Path 的變數。
         + 新增此路徑並按確定。
         + 環境變數更動完之後需要重新開啟命令列。
-+ 複製本專案
-    + `git clone git@github.com:penut85420/ALGS-Fan.git`
++ 複製本專案並進入資料夾
+    + `git clone https://github.com/penut85420/ALGS-Fan.git & cd ALGS-Fan`
 + 安裝需求套件
     + `pipenv run pip install -r requirements.txt`
-+ 放入憑證
++ 將 `credentials.json` 放入資料夾內
 + 啟動機器人
     + `pipenv run python algs_fan.py`
+    + 第一次啟動可能會需要操作驗證確認頁面
 
 ## Issue
 + `[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1076)`
