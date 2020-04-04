@@ -22,7 +22,7 @@ class Bot(commands.Bot):
                 ch = self.get_channel(ch)
                 msg = self.tc.get_next_event()
                 await ch.send(msg)
-            await asyncio.sleep(1)
+            await asyncio.sleep(600)
 
     async def event_message(self, msg):
         print(f'{msg.timestamp} [{msg.author.channel}] {msg.author.name}: {msg.content}')
@@ -43,6 +43,14 @@ class Bot(commands.Bot):
     @commands.command(name='阿吉')
     async def ahchi(self, ctx):
         await ctx.send('恭迎吉孤觀音⎝༼ ◕д ◕ ༽⎠ 渡世靈顯四方⎝༼ ◕д ◕ ༽⎠')
+
+    @commands.command(name='堅持')
+    async def persist(self, ctx):
+        await ctx.send('你在堅持啥啊')
+
+    @commands.command(name='釣魚')
+    async def fishing(self, ctx):
+        await ctx.send('GivePLZ ／︴只有天選之人能釣到這條魚 _________________ SabaPing')
 
 if __name__ == '__main__':
     bot = Bot()
