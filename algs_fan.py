@@ -1,4 +1,5 @@
 import os
+import time
 import datetime as dt
 from twitchio.ext import commands
 from twsc_calendar import TWSCCalendar
@@ -16,6 +17,12 @@ class Bot(commands.Bot):
 
     async def event_ready(self):
         print(f'{self.nick} is ready')
+        while True:
+            for ch in self.initial_channels:
+                ch = self.get_channel(ch)
+                msg = self.tc.get_next_event()
+                await ch.send(msg)
+            time.sleep(600)
 
     async def event_message(self, msg):
         print(f'{msg.timestamp} [{msg.author.channel}] {msg.author.name}: {msg.content}')
@@ -31,7 +38,11 @@ class Bot(commands.Bot):
 
     @commands.command(name='Nice', aliases=['nice'])
     async def nice(self, ctx):
-        await ctx.send('死亡鳳凰艦隊提督 GivePLZ 亞細亞催銀神帝 GivePLZ')
+        await ctx.send('死亡鳳凰艦隊提督 GivePLZ 抓放軍團最高統帥 GivePLZ 冰雪風暴靜滯領主 GivePLZ 亞細亞洲璀銀神帝 GivePLZ')
+
+    @commands.command(name='阿吉')
+    async def ahchi(self, ctx):
+        await ctx.send('恭迎吉孤觀音⎝༼ ◕д ◕ ༽⎠ 渡世靈顯四方⎝༼ ◕д ◕ ༽⎠')
 
 if __name__ == '__main__':
     bot = Bot()
