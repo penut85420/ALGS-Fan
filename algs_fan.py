@@ -1,5 +1,5 @@
 import os
-import time
+import asyncio
 import datetime as dt
 from twitchio.ext import commands
 from twsc_calendar import TWSCCalendar
@@ -22,7 +22,7 @@ class Bot(commands.Bot):
                 ch = self.get_channel(ch)
                 msg = self.tc.get_next_event()
                 await ch.send(msg)
-            time.sleep(600)
+            await asyncio.sleep(1)
 
     async def event_message(self, msg):
         print(f'{msg.timestamp} [{msg.author.channel}] {msg.author.name}: {msg.content}')
