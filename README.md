@@ -53,6 +53,10 @@
     + `pipenv run python algs_fan.py`
     + 第一次啟動可能會需要操作驗證確認頁面
 
+## 更新系統
++ 在專案資料夾內打開命令列並輸入更新指令
+    + `git pull origin master`
+
 ## Issue
 + `[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1076)`
     + 開啟瀏覽器前往 [Twitch](https://www.twitch.tv/) 一次即可。

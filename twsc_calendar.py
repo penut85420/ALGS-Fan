@@ -12,7 +12,6 @@ WEEK_DELTA = datetime.timedelta(days=7)
 CRED_PATH = './credentials.json'
 TOKEN_PATH = './token.pickle'
 
-
 class TWSCCalendar:
     def __init__(self):
         self.creds = self.get_creds()
@@ -62,19 +61,30 @@ class TWSCCalendar:
 
     def parse_event(self, e):
         title = e['summary'].replace('[SC2] ', '')
-        date = e['start'].get('dateTime', e['start'].get('date'))
+        start = self.get_date(e, 'start')
+        end = self.get_date(e, 'end')
+
+        return start, end, title
+
+    def get_date(self, e, key):
+        date = e[key].get('dateTime', e[key].get('date'))
         date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S+08:00')
         date = date - datetime.timedelta(hours=8)
 
-        return date, title
+        return date
 
-    def get_next_event(self):
+    def get_next_event(self, next_only=False):
+        now = datetime.datetime.utcnow()
         for e in self.get_events():
-            date, title = self.parse_event(e)
-            if date > datetime.datetime.utcnow():
+            start, end, title = self.parse_event(e)
+
+            if (now < start and next_only) or not next_only:
                 break
 
-        diff = date - datetime.datetime.utcnow()
+        if now > start and now < end:
+            return f'目前播放的比賽為「{title}」。欲知詳情請在聊天室輸入 !b'
+
+        diff = start - datetime.datetime.utcnow()
         seconds = diff.total_seconds()
 
         days = int(seconds / 60 / 60 / 24)
@@ -91,4 +101,4 @@ class TWSCCalendar:
 
 if __name__ == '__main__':
     tc = TWSCCalendar()
-    print(tc.get_next_event())
+    print(tc.get_next_event(next_only=False))

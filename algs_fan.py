@@ -22,19 +22,23 @@ class Bot(commands.Bot):
                 ch = self.get_channel(ch)
                 msg = self.tc.get_next_event()
                 await ch.send(msg)
-            await asyncio.sleep(600)
+            await asyncio.sleep(1200)
 
     async def event_message(self, msg):
         print(f'{msg.timestamp} [{msg.author.channel}] {msg.author.name}: {msg.content}')
         await self.handle_commands(msg)
 
-    @commands.command(name='hello', aliases=['哈囉'])
-    async def testing(self, ctx):
-        await ctx.send(f'{ctx.author.name} 你好啊!')
-
     @commands.command(name='星海比賽', aliases=['日程', '比賽'])
     async def calendar(self, ctx):
         await ctx.send(self.tc.get_next_event())
+
+    @commands.command(name='下一場比賽', aliases=['nt'])
+    async def next(self, ctx):
+        await ctx.send(self.tc.get_next_event(next_only=True))
+
+    @commands.command(name='hello', aliases=['哈囉'])
+    async def testing(self, ctx):
+        await ctx.send(f'{ctx.author.name} 你好啊!')
 
     @commands.command(name='Nice', aliases=['nice'])
     async def nice(self, ctx):
