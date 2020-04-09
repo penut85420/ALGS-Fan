@@ -39,7 +39,7 @@ class TWSCCalendar:
         return t.strftime('%Y-%m-%dT00:00:00Z')
 
     def _get_time(self):
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0)
         end = now + WEEK_DELTA
 
         now = self._get_utcstr(now)
@@ -78,13 +78,16 @@ class TWSCCalendar:
         for e in self.get_events():
             start, end, title = self.parse_event(e)
 
+            if now > end:
+                continue
+            
             if (now < start and next_only) or not next_only:
                 break
 
         if now > start and now < end:
             return f'目前播放的比賽為「{title}」。欲知詳情請在聊天室輸入 !b'
 
-        diff = start - datetime.datetime.utcnow()
+        diff = start - now
         seconds = diff.total_seconds()
 
         days = int(seconds / 60 / 60 / 24)
@@ -101,4 +104,7 @@ class TWSCCalendar:
 
 if __name__ == '__main__':
     tc = TWSCCalendar()
+    for e in tc.get_events(max_result=5):
+        start, end, title = tc.parse_event(e)
+        print(start, end, title)
     print(tc.get_next_event(next_only=False))
