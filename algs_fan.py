@@ -48,6 +48,10 @@ class Bot(commands.Bot):
     async def ahchi(self, ctx):
         await ctx.send('恭迎吉孤觀音⎝༼ ◕д ◕ ༽⎠ 渡世靈顯四方⎝༼ ◕д ◕ ༽⎠')
 
+    @commands.command(name='Top', aliases=['top'])
+    async def top(self, ctx):
+        await ctx.send('吃我的大火球～～～')
+
     @commands.command(name='堅持')
     async def persist(self, ctx):
         await ctx.send('你在堅持啥啊')
