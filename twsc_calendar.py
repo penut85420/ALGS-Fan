@@ -78,6 +78,9 @@ class TWSCCalendar:
         for e in self.get_events():
             start, end, title = self.parse_event(e)
 
+            if '📺' not in title:
+                continue
+
             if now > end:
                 continue
             
