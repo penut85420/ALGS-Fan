@@ -56,6 +56,10 @@ class Bot(commands.Bot):
     async def persist(self, ctx):
         await ctx.send('你在堅持啥啊')
 
+    @commands.command(name='提告', aliases=['sue'])
+    async def sue(self, ctx):
+        await ctx.send('Nice：「不排除提告」（設計對白）')
+
     @commands.command(name='釣魚')
     async def fishing(self, ctx):
         await ctx.send('GivePLZ ／︴只有天選之人能釣到這條魚 _________________ SabaPing')
