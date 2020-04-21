@@ -1,11 +1,16 @@
 import os
+import sys
 import asyncio
 import datetime as dt
+
 from twitchio.ext import commands
+from twitchio.ext.commands.errors import CommandNotFound
 from twsc_calendar import TWSCCalendar
 
-class Bot(commands.Bot):
-    def __init__(self):
+class ALGSFan(commands.Bot):
+    def __init__(self, logfile=sys.stdout, verbose=True):
+        self.logfile = logfile
+        self.verbose = verbose
         super().__init__(
             irc_token=os.environ['TMI_TOKEN'],
             client_id=os.environ['CLIENT_ID'],
@@ -15,8 +20,16 @@ class Bot(commands.Bot):
         )
         self.tc = TWSCCalendar()
 
+    def log(self, msg):
+        ts = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        msg = f'{ts} | {msg}\n'
+        self.logfile.write(msg)
+        self.logfile.flush()
+        if self.verbose:
+            sys.stdout.write(msg)
+
     async def event_ready(self):
-        print(f'{self.nick} is ready')
+        self.log(f'{self.nick} is ready')
         while True:
             for ch in self.initial_channels:
                 ch = self.get_channel(ch)
@@ -25,8 +38,15 @@ class Bot(commands.Bot):
             await asyncio.sleep(1200)
 
     async def event_message(self, msg):
-        print(f'{msg.timestamp} [{msg.author.channel}] {msg.author.name}: {msg.content}')
+        self.log(f'[{msg.author.channel}] {msg.author.name}: {msg.content}')
         await self.handle_commands(msg)
+
+    async def event_command_error(self, ctx, error):
+        if isinstance(error, CommandNotFound):
+            msg = f'Command "{ctx.content}" send from [{ctx.author.channel}] {ctx.author.name} was not found.'
+            self.log(msg)
+        else:
+            self.log(str(error).replace('\n', ' | '))
 
     @commands.command(name='星海比賽', aliases=['日程', '比賽'])
     async def calendar(self, ctx):
@@ -65,5 +85,10 @@ class Bot(commands.Bot):
         await ctx.send('GivePLZ ／︴只有天選之人能釣到這條魚 _________________ SabaPing')
 
 if __name__ == '__main__':
-    bot = Bot()
-    bot.run()
+    logdir = './logs'
+    os.makedirs(logdir, exist_ok=True)
+    ts = dt.datetime.now().strftime('%Y%m%d.log')
+    fn = os.path.join(logdir, ts)
+    logfile = open(fn, 'a', encoding='UTF-8')
+
+    ALGSFan(logfile=logfile).run()
