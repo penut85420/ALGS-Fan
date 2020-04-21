@@ -88,7 +88,10 @@ class TWSCCalendar:
                 break
 
         if now > start and now < end:
-            return f'目前播放的比賽為「{title}」。欲知詳情請在聊天室輸入 !b'
+            return (
+                f'目前有星海比賽正在藍兔電競直播 (〃∀〃) {title}，'
+                '欲知詳情請在 https://www.twitch.tv/algs_sc2 直播聊天室中輸入 !b'
+            )
 
         diff = start - now
         seconds = diff.total_seconds()
