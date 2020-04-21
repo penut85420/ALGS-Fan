@@ -55,6 +55,10 @@ class ALGSFan(commands.Bot):
     @commands.command(name='下一場比賽', aliases=['nt'])
     async def next(self, ctx):
         await ctx.send(self.tc.get_next_event(next_only=True))
+    
+    @commands.command(name='報名')
+    async def sign(self, ctx):
+        await ctx.send(self.tc.get_next_sign())
 
     @commands.command(name='hello', aliases=['哈囉'])
     async def testing(self, ctx):

@@ -83,7 +83,7 @@ class TWSCCalendar:
 
             if now > end:
                 continue
-            
+
             if (now < start and next_only) or not next_only:
                 break
 
@@ -105,9 +105,26 @@ class TWSCCalendar:
             'http://bit.ly/TWSCSC2CAL'
         )
 
+    def get_next_sign(self):
+        now = datetime.datetime.utcnow()
+        for e in self.get_events():
+            start, end, title = self.parse_event(e)
+
+            if '📜' not in title:
+                continue
+
+            if now < start:
+                break
+
+        return (
+            f'下一場公開可報名的賽事為「{title}」，'
+            '欲知詳情請見社群 Google 日曆 http://bit.ly/TWSCSC2CAL，'
+            '若需要協助請洽 https://discord.gg/SwX9KMj'
+        )
+
 if __name__ == '__main__':
     tc = TWSCCalendar()
     for e in tc.get_events(max_result=5):
         start, end, title = tc.parse_event(e)
         print(start, end, title)
-    print(tc.get_next_event(next_only=False))
+    print(tc.get_next_sign())
