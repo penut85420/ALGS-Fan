@@ -55,7 +55,7 @@ class ALGSFan(commands.Bot):
     @commands.command(name='下一場比賽', aliases=['nt'])
     async def next(self, ctx):
         await ctx.send(self.tc.get_next_event(next_only=True))
-    
+
     @commands.command(name='報名')
     async def sign(self, ctx):
         await ctx.send(self.tc.get_next_sign())
@@ -64,9 +64,29 @@ class ALGSFan(commands.Bot):
     async def testing(self, ctx):
         await ctx.send(f'{ctx.author.name} 你好啊!')
 
+    @commands.command(name='藍兔', aliases=['algs'])
+    async def algs(self, ctx):
+        await ctx.send('藍兔電子競技工作室臉書粉絲團 https://www.facebook.com/ALGSSC2/')
+
     @commands.command(name='Nice', aliases=['nice'])
     async def nice(self, ctx):
-        await ctx.send('死亡鳳凰艦隊提督 GivePLZ 抓放軍團最高統帥 GivePLZ 冰雪風暴靜滯領主 GivePLZ 亞細亞洲璀銀神帝 GivePLZ')
+        nice_name = [
+            '死亡鳳凰艦隊提督',
+            '抓放軍團最高統帥',
+            '冰雪風暴靜滯領主',
+            '亞細亞洲璀銀神帝',
+            '極限大師廿八星宿',
+            '四大毒奶堅持天尊'
+        ]
+        await ctx.send(' GivePLZ '.join(nice_name) + ' GivePLZ ')
+
+    @commands.command(name='az', aliases=['AZ', 'Az', 'azure', 'Azure'])
+    async def az(self, ctx):
+        await ctx.send('AZ 大大的臉書粉絲團 https://www.facebook.com/AzureForSC2/')
+
+    @commands.command(name='Rex', aliases=['rex'])
+    async def rex(self, ctx):
+        await ctx.send('Rex小雷雷臉書粉絲團 https://www.facebook.com/RexStorMWTF')
 
     @commands.command(name='阿吉')
     async def ahchi(self, ctx):
