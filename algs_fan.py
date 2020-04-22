@@ -64,7 +64,7 @@ class ALGSFan(commands.Bot):
     async def testing(self, ctx):
         await ctx.send(f'{ctx.author.name} 你好啊!')
 
-    @commands.command(name='藍兔', aliases=['algs'])
+    @commands.command(name='藍兔', aliases=['algs', 'ALGS'])
     async def algs(self, ctx):
         await ctx.send('藍兔電子競技工作室臉書粉絲團 https://www.facebook.com/ALGSSC2/')
 
