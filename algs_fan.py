@@ -11,12 +11,13 @@ class ALGSFan(commands.Bot):
     def __init__(self, logfile=sys.stdout, verbose=True):
         self.logfile = logfile
         self.verbose = verbose
+        self.channel_count = {channel: 10 for channel in os.environ['CHANNEL'].split(',')}
         super().__init__(
             irc_token=os.environ['TMI_TOKEN'],
             client_id=os.environ['CLIENT_ID'],
             nick=os.environ['BOT_NICK'],
             prefix='!',
-            initial_channels=os.environ['CHANNEL'].split(',')
+            initial_channels=list(self.channel_count)
         )
         self.tc = TWSCCalendar()
 
@@ -31,14 +32,18 @@ class ALGSFan(commands.Bot):
     async def event_ready(self):
         self.log(f'{self.nick} is ready')
         while True:
-            for ch in self.initial_channels:
-                ch = self.get_channel(ch)
-                msg = self.tc.get_next_event()
-                await ch.send(msg)
+            for ch, count in self.channel_count.items():
+                if count >= 10:
+                    self.channel_count[ch] = 0
+                    ch = self.get_channel(ch)
+                    msg = self.tc.get_next_event()
+                    await ch.send(msg)
             await asyncio.sleep(1200)
 
     async def event_message(self, msg):
         self.log(f'[{msg.author.channel}] {msg.author.name}: {msg.content}')
+        if str(msg.author.channel) in self.channel_count and msg.author.name != self.nick:
+            self.channel_count[str(msg.author.channel)] += 1
         await self.handle_commands(msg)
 
     async def event_command_error(self, ctx, error):
