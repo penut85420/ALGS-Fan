@@ -109,6 +109,10 @@ class ALGSFan(commands.Bot):
     async def sue(self, ctx):
         await ctx.send('Nice：「不排除提告」（設計對白）')
 
+    @commands.command(name='錯覺', aliases=['illusion'])
+    async def illusion(self, ctx):
+        await ctx.send('你從什麼時候開始產生了你這盤能贏的錯覺？')
+
     @commands.command(name='釣魚')
     async def fishing(self, ctx):
         await ctx.send('GivePLZ ／︴只有天選之人能釣到這條魚 _________________ SabaPing')
