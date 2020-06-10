@@ -1,56 +1,36 @@
-import datetime
-import os.path
+import os
 import pickle
+import datetime
 
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-TWSC_CALENDAR = '59o7f5ng87g2ilq635r5r78o04@group.calendar.google.com'
+TWSC_CALENDAR = os.getenv('CAL_ID')
 WEEK_DELTA = datetime.timedelta(days=7)
-CRED_PATH = './credentials.json'
-TOKEN_PATH = './token.pickle'
 
 class TWSCCalendar:
     def __init__(self):
-        self.creds = self.get_creds()
+        creds = os.getenv('CAL_TOKEN')
+        creds = bytearray.fromhex(creds)
+        self.creds = pickle.loads(creds)
 
-    def get_creds(self):
-        creds = None
-
-        if os.path.exists(TOKEN_PATH):
-            with open(TOKEN_PATH, 'rb') as token:
-                creds = pickle.load(token)
-
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    CRED_PATH, SCOPES)
-                creds = flow.run_local_server()
-            with open(TOKEN_PATH, 'wb') as token:
-                pickle.dump(creds, token)
-
-        return creds
-
-    def _get_utcstr(self, t):
+    def get_utcstr(self, t):
         return t.strftime('%Y-%m-%dT00:00:00Z')
 
-    def _get_time(self):
+    def get_week_range(self):
         now = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0)
         end = now + WEEK_DELTA
 
-        now = self._get_utcstr(now)
-        end = self._get_utcstr(end)
+        now = self.get_utcstr(now)
+        end = self.get_utcstr(end)
 
         return now, end
 
     def get_events(self, max_result=50):
         service = build('calendar', 'v3', credentials=self.creds)
 
-        now, end = self._get_time()
+        now, end = self.get_week_range()
 
         events_result = service.events().list(  # pylint: disable=no-member
             calendarId=TWSC_CALENDAR, maxResults=max_result, singleEvents=True,
