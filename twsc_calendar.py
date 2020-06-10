@@ -1,56 +1,36 @@
-import datetime
-import os.path
+import os
 import pickle
+import datetime
 
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-TWSC_CALENDAR = '59o7f5ng87g2ilq635r5r78o04@group.calendar.google.com'
+TWSC_CALENDAR = os.getenv('CAL_ID')
 WEEK_DELTA = datetime.timedelta(days=7)
-CRED_PATH = './credentials.json'
-TOKEN_PATH = './token.pickle'
 
 class TWSCCalendar:
     def __init__(self):
-        self.creds = self.get_creds()
+        creds = os.getenv('CAL_TOKEN')
+        creds = bytearray.fromhex(creds)
+        self.creds = pickle.loads(creds)
 
-    def get_creds(self):
-        creds = None
-
-        if os.path.exists(TOKEN_PATH):
-            with open(TOKEN_PATH, 'rb') as token:
-                creds = pickle.load(token)
-
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    CRED_PATH, SCOPES)
-                creds = flow.run_local_server()
-            with open(TOKEN_PATH, 'wb') as token:
-                pickle.dump(creds, token)
-
-        return creds
-
-    def _get_utcstr(self, t):
+    def get_utcstr(self, t):
         return t.strftime('%Y-%m-%dT00:00:00Z')
 
-    def _get_time(self):
+    def get_week_range(self):
         now = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0)
         end = now + WEEK_DELTA
 
-        now = self._get_utcstr(now)
-        end = self._get_utcstr(end)
+        now = self.get_utcstr(now)
+        end = self.get_utcstr(end)
 
         return now, end
 
     def get_events(self, max_result=50):
         service = build('calendar', 'v3', credentials=self.creds)
 
-        now, end = self._get_time()
+        now, end = self.get_week_range()
 
         events_result = service.events().list(  # pylint: disable=no-member
             calendarId=TWSC_CALENDAR, maxResults=max_result, singleEvents=True,
@@ -66,6 +46,17 @@ class TWSCCalendar:
 
         return start, end, title
 
+    def parse_desc(self, e):
+        desc = e['description']
+        begin_token = '📄賽事資訊'
+        end_token = '📇'
+
+        begin_idx = desc.find(begin_token) + len(begin_token)
+        end_idx = desc.find(end_token)
+        desc = desc[begin_idx:end_idx].strip().replace('\n', ' ')
+
+        return desc
+
     def get_date(self, e, key):
         date = e[key].get('dateTime', e[key].get('date'))
         date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S+08:00')
@@ -75,6 +66,7 @@ class TWSCCalendar:
 
     def get_next_event(self, next_only=False):
         now = datetime.datetime.utcnow()
+        start = end = title = None
         for e in self.get_events():
             start, end, title = self.parse_event(e)
 
@@ -87,10 +79,14 @@ class TWSCCalendar:
             if (now < start and next_only) or not next_only:
                 break
 
+        if start is None:
+            return '目前沒有比賽'
+
         if now > start and now < end:
+            desc = self.parse_desc(e)
             return (
-                f'目前有星海比賽正在藍兔電競直播 (〃∀〃) {title}，'
-                '欲知詳情請在 https://www.twitch.tv/algs_sc2 直播聊天室中輸入 !b'
+                f'目前有星海比賽「{title}」正在直播 (〃∀〃)，'
+                f'欲知詳情請看「{desc}」'
             )
 
         diff = start - now
@@ -127,7 +123,4 @@ class TWSCCalendar:
 
 if __name__ == '__main__':
     tc = TWSCCalendar()
-    for e in tc.get_events(max_result=5):
-        start, end, title = tc.parse_event(e)
-        print(start, end, title)
-    print(tc.get_next_sign())
+    print(tc.get_next_event())
