@@ -46,6 +46,17 @@ class TWSCCalendar:
 
         return start, end, title
 
+    def parse_desc(self, e):
+        desc = e['description']
+        begin_token = '📄賽事資訊'
+        end_token = '📇'
+
+        begin_idx = desc.find(begin_token) + len(begin_token)
+        end_idx = desc.find(end_token)
+        desc = desc[begin_idx:end_idx].strip().replace('\n', ' ')
+
+        return desc
+
     def get_date(self, e, key):
         date = e[key].get('dateTime', e[key].get('date'))
         date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S+08:00')
@@ -68,9 +79,10 @@ class TWSCCalendar:
                 break
 
         if now > start and now < end:
+            desc = self.parse_desc(e)
             return (
-                f'目前有星海比賽正在藍兔電競直播 (〃∀〃) {title}，'
-                '欲知詳情請在 https://www.twitch.tv/algs_sc2 直播聊天室中輸入 !b'
+                f'目前有星海比賽「{title}」正在直播 (〃∀〃)，'
+                f'欲知詳情請看「{desc}」'
             )
 
         diff = start - now
@@ -107,7 +119,4 @@ class TWSCCalendar:
 
 if __name__ == '__main__':
     tc = TWSCCalendar()
-    for e in tc.get_events(max_result=5):
-        start, end, title = tc.parse_event(e)
-        print(start, end, title)
-    print(tc.get_next_sign())
+    print(tc.get_next_event())
