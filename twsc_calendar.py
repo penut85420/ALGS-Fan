@@ -66,6 +66,7 @@ class TWSCCalendar:
 
     def get_next_event(self, next_only=False):
         now = datetime.datetime.utcnow()
+        start = end = title = None
         for e in self.get_events():
             start, end, title = self.parse_event(e)
 
@@ -77,6 +78,9 @@ class TWSCCalendar:
 
             if (now < start and next_only) or not next_only:
                 break
+
+        if start is None:
+            return '目前沒有比賽'
 
         if now > start and now < end:
             desc = self.parse_desc(e)

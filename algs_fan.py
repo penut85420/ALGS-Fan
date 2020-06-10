@@ -11,7 +11,7 @@ class ALGSFan(commands.Bot):
     def __init__(self, logfile=sys.stdout, verbose=True):
         self.logfile = logfile
         self.verbose = verbose
-        self.channel_count = {channel: 10 for channel in os.environ['CHANNEL'].split(',')}
+        self.channel_count = {channel: 10 for channel in os.environ['CHANNEL'].strip().split(',')}
         super().__init__(
             irc_token=os.environ['TMI_TOKEN'],
             client_id=os.environ['CLIENT_ID'],
@@ -42,6 +42,7 @@ class ALGSFan(commands.Bot):
 
     async def event_message(self, msg):
         self.log(f'[{msg.author.channel}] {msg.author.name}: {msg.content}')
+        msg.content = msg.content.lower()
         if str(msg.author.channel) in self.channel_count and msg.author.name != self.nick:
             self.channel_count[str(msg.author.channel)] += 1
         await self.handle_commands(msg)
@@ -53,7 +54,7 @@ class ALGSFan(commands.Bot):
         else:
             self.log(str(error).replace('\n', ' | '))
 
-    @commands.command(name='星海比賽', aliases=['日程', '比賽'])
+    @commands.command(name='星海比賽', aliases=['日程', '比賽', 'b', 'bracket', '賽程', '賽程表'])
     async def calendar(self, ctx):
         await ctx.send(self.tc.get_next_event())
 
@@ -69,11 +70,11 @@ class ALGSFan(commands.Bot):
     async def testing(self, ctx):
         await ctx.send(f'{ctx.author.name} 你好啊!')
 
-    @commands.command(name='藍兔', aliases=['algs', 'ALGS'])
+    @commands.command(name='藍兔', aliases=['algs'])
     async def algs(self, ctx):
         await ctx.send('藍兔電子競技工作室臉書粉絲團 https://www.facebook.com/ALGSSC2/')
 
-    @commands.command(name='Nice', aliases=['nice'])
+    @commands.command(name='nice')
     async def nice(self, ctx):
         nice_name = [
             '死亡鳳凰艦隊提督',
@@ -85,19 +86,19 @@ class ALGSFan(commands.Bot):
         ]
         await ctx.send(' GivePLZ '.join(nice_name) + ' GivePLZ ')
 
-    @commands.command(name='az', aliases=['AZ', 'Az', 'azure', 'Azure'])
+    @commands.command(name='az', aliases=['azure'])
     async def az(self, ctx):
         await ctx.send('AZ 大大的臉書粉絲團 https://www.facebook.com/AzureForSC2/')
 
-    @commands.command(name='Rex', aliases=['rex'])
+    @commands.command(name='rex')
     async def rex(self, ctx):
-        await ctx.send('Rex小雷雷臉書粉絲團 https://www.facebook.com/RexStorMWTF')
+        await ctx.send('Rex 小雷雷臉書粉絲團 https://www.facebook.com/RexStorMWTF')
 
     @commands.command(name='阿吉')
     async def ahchi(self, ctx):
         await ctx.send('恭迎吉孤觀音⎝༼ ◕д ◕ ༽⎠ 渡世靈顯四方⎝༼ ◕д ◕ ༽⎠')
 
-    @commands.command(name='Top', aliases=['top'])
+    @commands.command(name='top')
     async def top(self, ctx):
         await ctx.send('吃我的大火球～～～')
 
