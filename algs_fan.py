@@ -1,6 +1,7 @@
 import os
 import sys
 import asyncio
+import threading
 import datetime as dt
 
 from twitchio.ext import commands
@@ -11,13 +12,14 @@ class ALGSFan(commands.Bot):
     def __init__(self, logfile=sys.stdout, verbose=True):
         self.logfile = logfile
         self.verbose = verbose
-        self.channel_count = {channel: 10 for channel in os.environ['CHANNEL'].strip().split(',')}
+        self.channel_list = os.environ['CHANNEL'].strip().split(',')
+        self.channel_count = {channel: 10 for channel in self.channel_list}
         super().__init__(
             irc_token=os.environ['TMI_TOKEN'],
             client_id=os.environ['CLIENT_ID'],
             nick=os.environ['BOT_NICK'],
             prefix='!',
-            initial_channels=list(self.channel_count)
+            initial_channels=list(self.channel_list)
         )
         self.tc = TWSCCalendar()
 
@@ -31,14 +33,33 @@ class ALGSFan(commands.Bot):
 
     async def event_ready(self):
         self.log(f'{self.nick} is ready')
-        while True:
-            for ch, count in self.channel_count.items():
-                if count >= 10:
-                    self.channel_count[ch] = 0
-                    ch = self.get_channel(ch)
-                    msg = self.tc.get_next_event()
-                    await ch.send(msg)
-            await asyncio.sleep(1200)
+
+        async def timer_next_event():
+            while True:
+                for ch, count in self.channel_count.items():
+                    if count > -1:
+                        self.channel_count[ch] = 0
+                        ch = self.get_channel(ch)
+                        msg = self.tc.get_next_event()
+                        await ch.send(msg)
+                await asyncio.sleep(1200)
+
+        async def timer_next_sign():
+            while True:
+                for ch, count in self.channel_count.items():
+                    if count > -1:
+                        self.channel_count[ch] = 0
+                        ch = self.get_channel(ch)
+                        msg = self.tc.get_next_sign()
+                        await ch.send(msg)
+                await asyncio.sleep(1800)
+
+        tasks = [timer_next_event, timer_next_sign]
+        for i, t in enumerate(tasks):
+            tasks[i] = asyncio.create_task(t())
+
+        for t in tasks:
+            await t
 
     async def event_message(self, msg):
         self.log(f'[{msg.author.channel}] {msg.author.name}: {msg.content}')
