@@ -69,6 +69,7 @@ class TWSCCalendar:
         start = end = title = None
         for e in self.get_events():
             start, end, title = self.parse_event(e)
+            desc = self.parse_desc(e)
 
             if '📺' not in title:
                 continue
@@ -83,7 +84,6 @@ class TWSCCalendar:
             return '目前沒有比賽'
 
         if now > start and now < end:
-            desc = self.parse_desc(e)
             return (
                 f'目前有星海比賽「{title}」正在直播 (〃∀〃)，'
                 f'欲知詳情請看「{desc}」'
@@ -98,8 +98,9 @@ class TWSCCalendar:
 
         return (
             f'離下一場比賽「{title}」'
-            f'還有 「{days} 天 {hours} 小時 {minutes} 分鐘」，'
-            '點連結加入社群 Google日曆，'
+            f'還有 「{days} 天 {hours} 小時 {minutes} 分鐘」。'
+            f'賽事資訊：「{desc}」'
+            '加入社群 Google日曆，'
             '掌握整個月的賽事轉播 📅 '
             'http://bit.ly/TWSCSC2CAL'
         )
@@ -108,6 +109,7 @@ class TWSCCalendar:
         now = datetime.datetime.utcnow()
         for e in self.get_events():
             start, end, title = self.parse_event(e)
+            desc = self.parse_desc(e)
 
             if '📜' not in title:
                 continue
@@ -116,8 +118,8 @@ class TWSCCalendar:
                 break
 
         return (
-            f'下一場公開可報名的賽事為「{title}」，'
-            '欲知詳情請見社群 Google 日曆 http://bit.ly/TWSCSC2CAL，'
+            f'下一場公開可報名的賽事為「{title}」。'
+            f'賽事資訊：「{desc}」'
             '若需要協助請洽 https://discord.gg/SwX9KMj'
         )
 

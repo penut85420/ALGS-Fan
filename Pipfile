@@ -13,3 +13,6 @@ google-api-python-client = "*"
 google-auth-httplib2 = "*"
 google-auth-oauthlib = "*"
 twitchio = "*"
+
+[require]
+python=3.7
