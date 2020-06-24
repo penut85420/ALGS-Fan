@@ -13,6 +13,7 @@ google-api-python-client = "==1.9.3"
 google-auth-httplib2 = "==0.0.3"
 google-auth-oauthlib = "==0.4.1"
 twitchio = "==1.1.0"
+loguru = "*"
 
 [require]
 python=3.7
