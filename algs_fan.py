@@ -4,16 +4,19 @@ import asyncio
 import threading
 import datetime as dt
 
+os.environ['LOGURU_AUTOINIT'] = 'False'
+from loguru import logger
 from twitchio.ext import commands
 from twitchio.ext.commands.errors import CommandNotFound
 from twsc_calendar import TWSCCalendar
 
 class ALGSFan(commands.Bot):
     def __init__(self, logfile=sys.stdout, verbose=True):
+        self.threshold = 10
         self.logfile = logfile
         self.verbose = verbose
         self.channel_list = os.environ['CHANNEL'].strip().split(',')
-        self.channel_count = {channel: 10 for channel in self.channel_list}
+        self.channel_count = {channel: self.threshold for channel in self.channel_list}
         super().__init__(
             irc_token=os.environ['TMI_TOKEN'],
             client_id=os.environ['CLIENT_ID'],
@@ -24,12 +27,7 @@ class ALGSFan(commands.Bot):
         self.tc = TWSCCalendar()
 
     def log(self, msg):
-        ts = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-        msg = f'{ts} | {msg}\n'
-        self.logfile.write(msg)
-        self.logfile.flush()
-        if self.verbose:
-            sys.stdout.write(msg)
+        self.logfile.info(msg.replace('\n', ' '))
 
     async def event_ready(self):
         self.log(f'{self.nick} is ready')
@@ -37,7 +35,7 @@ class ALGSFan(commands.Bot):
         async def timer_next_event():
             while True:
                 for ch, count in self.channel_count.items():
-                    if count > -1:
+                    if count >= self.threshold:
                         self.channel_count[ch] = 0
                         ch = self.get_channel(ch)
                         msg = self.tc.get_next_event()
@@ -47,7 +45,7 @@ class ALGSFan(commands.Bot):
         async def timer_next_sign():
             while True:
                 for ch, count in self.channel_count.items():
-                    if count > -1:
+                    if count >= self.threshold:
                         self.channel_count[ch] = 0
                         ch = self.get_channel(ch)
                         msg = self.tc.get_next_sign()
@@ -139,11 +137,22 @@ class ALGSFan(commands.Bot):
     async def fishing(self, ctx):
         await ctx.send('GivePLZ ／︴只有天選之人能釣到這條魚 _________________ SabaPing')
 
-if __name__ == '__main__':
-    logdir = './logs'
-    os.makedirs(logdir, exist_ok=True)
-    ts = dt.datetime.now().strftime('%Y%m%d.log')
-    fn = os.path.join(logdir, ts)
-    logfile = open(fn, 'a', encoding='UTF-8')
+def set_logger():
+    log_format = (
+        '{time:YYYY-MM-DD HH:mm:ss.SSSSSS} | '
+        '<lvl>{level: ^9}</lvl> | '
+        '{message}'
+    )
+    logger.add(sys.stderr, level='INFO', format=log_format)
+    logger.add(
+        f'./logs/algs.log',
+        rotation='7 day',
+        retention='30 days',
+        level='INFO',
+        encoding='UTF-8',
+        format=log_format
+    )
 
-    ALGSFan(logfile=logfile).run()
+if __name__ == '__main__':
+    set_logger()
+    ALGSFan(logfile=logger).run()

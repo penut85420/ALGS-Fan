@@ -86,7 +86,7 @@ class TWSCCalendar:
         if now > start and now < end:
             return (
                 f'目前有星海比賽「{title}」正在直播 (〃∀〃)，'
-                f'欲知詳情請看「{desc}」'
+                f'欲知詳情請看「 {desc} 」'
             )
 
         diff = start - now
@@ -99,7 +99,7 @@ class TWSCCalendar:
         return (
             f'離下一場比賽「{title}」'
             f'還有 「{days} 天 {hours} 小時 {minutes} 分鐘」。'
-            f'賽事資訊：「{desc}」'
+            f'賽事資訊：「 {desc} 」'
             '加入社群 Google日曆，'
             '掌握整個月的賽事轉播 📅 '
             'http://bit.ly/TWSCSC2CAL'
@@ -107,6 +107,7 @@ class TWSCCalendar:
 
     def get_next_sign(self):
         now = datetime.datetime.utcnow()
+        is_found = False
         for e in self.get_events():
             start, end, title = self.parse_event(e)
             desc = self.parse_desc(e)
@@ -115,7 +116,11 @@ class TWSCCalendar:
                 continue
 
             if now < start:
+                is_found = True
                 break
+
+        if not is_found:
+            return '目前一週內沒有可供報名的賽事唷 (☍﹏⁰) 若想知道更多比賽行程請看社群賽事行事曆 http://bit.ly/TWSCSC2CAL'
 
         return (
             f'下一場公開可報名的賽事為「{title}」。'
@@ -126,3 +131,5 @@ class TWSCCalendar:
 if __name__ == '__main__':
     tc = TWSCCalendar()
     print(tc.get_next_event())
+    print(tc.get_next_event(next_only=True))
+    # print(tc.get_next_sign())
