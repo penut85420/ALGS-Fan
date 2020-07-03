@@ -137,6 +137,10 @@ class ALGSFan(commands.Bot):
     async def fishing(self, ctx):
         await ctx.send('GivePLZ ／︴只有天選之人能釣到這條魚 _________________ SabaPing')
 
+    @commands.command(name='許願')
+    async def wish(self, ctx):
+        await ctx.send('歡迎到 GitHub 跟小粉絲許願新指令喔！ https://github.com/penut85420/ALGS-Fan')
+
 def set_logger():
     log_format = (
         '{time:YYYY-MM-DD HH:mm:ss.SSSSSS} | '
