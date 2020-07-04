@@ -40,7 +40,7 @@ class ALGSFan(commands.Bot):
                         ch = self.get_channel(ch)
                         msg = self.tc.get_next_event()
                         await ch.send(msg)
-                await asyncio.sleep(1200)
+                await asyncio.sleep(1800)
 
         async def timer_next_sign():
             while True:
@@ -50,7 +50,7 @@ class ALGSFan(commands.Bot):
                         ch = self.get_channel(ch)
                         msg = self.tc.get_next_sign()
                         await ch.send(msg)
-                await asyncio.sleep(1800)
+                await asyncio.sleep(2400)
 
         tasks = [timer_next_event, timer_next_sign]
         for i, t in enumerate(tasks):
