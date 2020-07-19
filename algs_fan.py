@@ -133,6 +133,10 @@ class ALGSFan(commands.Bot):
     async def illusion(self, ctx):
         await ctx.send('你從什麼時候開始產生了你這盤能贏的錯覺？')
 
+    @commands.command(name='藉口', aliases=['excuse'])
+    async def excuse(self, ctx):
+        await ctx.send('成功的人找方法，失敗的人找藉口。')
+
     @commands.command(name='釣魚')
     async def fishing(self, ctx):
         await ctx.send('GivePLZ ／︴只有天選之人能釣到這條魚 _________________ SabaPing')
