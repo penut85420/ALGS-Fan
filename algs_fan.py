@@ -93,6 +93,10 @@ class ALGSFan(commands.Bot):
     async def algs(self, ctx):
         await ctx.send('藍兔電子競技工作室臉書粉絲團 https://www.facebook.com/ALGSSC2/')
 
+    @commands.command(name='星途', aliases=['pos'])
+    async def pos(self, ctx):
+        await ctx.send('星途(Path of Star) - 臺灣《星海爭霸II》募資邀請賽 https://www.zeczec.com/projects/pathofstar')
+
     @commands.command(name='nice')
     async def nice(self, ctx):
         nice_name = [
