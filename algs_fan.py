@@ -73,7 +73,7 @@ class ALGSFan(commands.Bot):
         else:
             self.log(str(error).replace('\n', ' | '))
 
-    @commands.command(name='星海比賽', aliases=['日程', '比賽', 'b', 'bracket', '賽程', '賽程表'])
+    @commands.command(name='星海比賽', aliases=['比賽', 'b', 'bracket', '賽程', '賽程表'])
     async def calendar(self, ctx):
         await ctx.send(self.tc.get_next_event())
 
