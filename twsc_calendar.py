@@ -46,16 +46,20 @@ class TWSCCalendar:
 
         return start, end, title
 
-    def parse_desc(self, e):
+    def retrieve_para(self, e, begin_token, end_token):
         desc = e['description']
-        begin_token = '📄賽事資訊'
-        end_token = '📇'
 
         begin_idx = desc.find(begin_token) + len(begin_token)
         end_idx = desc.find(end_token)
         desc = desc[begin_idx:end_idx].strip().replace('\n', ' ')
 
         return desc
+
+    def parse_desc(self, e):
+        return self.retrieve_para(e, '📄賽事資訊', '📇')
+    
+    def parse_sign(self, e):
+        return self.retrieve_para(e, '🔗報名連結', '📄')
 
     def get_date(self, e, key):
         date = e[key].get('dateTime', e[key].get('date'))
@@ -100,9 +104,6 @@ class TWSCCalendar:
             f'離下一場比賽「{title}」'
             f'還有 「{days} 天 {hours} 小時 {minutes} 分鐘」。'
             f'賽事資訊：「 {desc} 」'
-            '加入社群 Google日曆，'
-            '掌握整個月的賽事轉播 📅 '
-            'http://bit.ly/TWSCSC2CAL'
         )
 
     def get_next_sign(self):
@@ -110,7 +111,7 @@ class TWSCCalendar:
         is_found = False
         for e in self.get_events():
             start, end, title = self.parse_event(e)
-            desc = self.parse_desc(e)
+            desc = self.parse_sign(e)
 
             if '📜' not in title:
                 continue
@@ -124,12 +125,5 @@ class TWSCCalendar:
 
         return (
             f'下一場公開可報名的賽事為「{title}」。'
-            f'賽事資訊：「{desc}」'
-            '若需要協助請洽 https://discord.gg/SwX9KMj'
+            f'賽事資訊：{desc}'
         )
-
-if __name__ == '__main__':
-    tc = TWSCCalendar()
-    print(tc.get_next_event())
-    print(tc.get_next_event(next_only=True))
-    # print(tc.get_next_sign())
