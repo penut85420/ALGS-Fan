@@ -9,6 +9,7 @@ from loguru import logger
 from twitchio.ext import commands
 from twitchio.ext.commands.errors import CommandNotFound
 from twsc_calendar import TWSCCalendar
+from liquipedia import search_next
 
 class ALGSFan(commands.Bot):
     def __init__(self, logfile=sys.stdout, verbose=True):
@@ -97,6 +98,19 @@ class ALGSFan(commands.Bot):
     async def pos(self, ctx):
         await ctx.send('星途(Path of Star) - 臺灣《星海爭霸II》募資邀請賽 https://www.zeczec.com/projects/pathofstar')
 
+    @commands.command(name='召喚')
+    async def cmd_summon(self, ctx, *arg):
+        player = ' '.join(arg).strip()
+        if player == '':
+            await ctx.send('指令格式：`!召喚 [選手名稱]`')
+            return
+
+        result = search_next(player)
+        if result is not None:
+            await ctx.send(result)
+        else:
+            await ctx.send(f'沒有找到 {player} 最近的比賽 QQ')
+
     @commands.command(name='nice')
     async def nice(self, ctx):
         nice_name = [
@@ -108,6 +122,18 @@ class ALGSFan(commands.Bot):
             '四大毒奶堅持天尊'
         ]
         await ctx.send(' GivePLZ '.join(nice_name) + ' GivePLZ ')
+
+    @commands.command(name='has')
+    async def cmd_has(self, ctx):
+        await ctx.send('Has 臉書粉絲團 https://www.facebook.com/SC2Has-273980189818092/')
+
+    @commands.command(name='hui')
+    async def cmd_hui(self, ctx):
+        await ctx.send('輝哥臉書粉絲團 https://www.facebook.com/hui379/')
+
+    @commands.command(name='sobad')
+    async def cmd_sobad(self, ctx):
+        await ctx.send('師哥臉書粉絲團 https://www.facebook.com/rushsobad')
 
     @commands.command(name='az', aliases=['azure'])
     async def az(self, ctx):
