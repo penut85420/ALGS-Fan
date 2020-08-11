@@ -106,10 +106,7 @@ class ALGSFan(commands.Bot):
             return
 
         result = search_next(player)
-        if result is not None:
-            await ctx.send(result)
-        else:
-            await ctx.send(f'沒有找到 {player} 最近的比賽 QQ')
+        await ctx.send(result)
 
     @commands.command(name='nice')
     async def nice(self, ctx):
@@ -122,6 +119,21 @@ class ALGSFan(commands.Bot):
             '四大毒奶堅持天尊'
         ]
         await ctx.send(' GivePLZ '.join(nice_name) + ' GivePLZ ')
+
+    @commands.command(name='nice比賽')
+    async def cmd_nice_match(self, ctx):
+        msg = search_next('Nice')
+        await ctx.send(msg)
+
+    @commands.command(name='has比賽')
+    async def cmd_has_match(self, ctx):
+        msg = search_next('Has')
+        await ctx.send(msg)
+
+    @commands.command(name='rex比賽')
+    async def cmd_rex_match(self, ctx):
+        msg = search_next('Rex')
+        await ctx.send(msg)
 
     @commands.command(name='has')
     async def cmd_has(self, ctx):

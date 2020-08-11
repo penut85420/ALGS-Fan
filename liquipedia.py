@@ -19,23 +19,28 @@ def search_match_list(player):
                 left_name, right_name = right_name, left_name
             timestamp = table.find('span', attrs={'class': 'match-countdown'}).text.strip()
             timestamp = pd.to_datetime(timestamp).to_pydatetime().replace(tzinfo=None)
-            if timestamp < dt.datetime.utcnow():
-                continue
             tournament = table.find_all('div')[-1].text.strip()
-            return left_name, right_name, timestamp, tournament
+            is_live = True if timestamp < dt.datetime.utcnow() else False
+
+            return left_name, right_name, timestamp, tournament, is_live
+
     return None
 
 def search_next(player):
     result = search_match_list(player)
     if result is not None:
-        left, right, ts, tour = result
-        delta = ts - dt.datetime.utcnow()
-        seconds = delta.total_seconds()
-        minutes = int(seconds // 60 % 60)
-        hours = int(seconds // 60 // 60 % 24)
-        s = f'{hours} 小時 {minutes} 分鐘'
-        if delta.days:
-            s = f'{delta.days} 天 {s}'
+        left, right, ts, tour, is_live = result
+        if not is_live:
+            delta = ts - dt.datetime.utcnow()
+            seconds = delta.total_seconds()
+            minutes = int(seconds // 60 % 60)
+            hours = int(seconds // 60 // 60 % 24)
+            s = f'{hours} 小時 {minutes} 分鐘'
+            if delta.days:
+                s = f'{delta.days} 天 {s}'
 
-        return f'距離 {left} 的下一場比賽「{tour}」對上 {right} 就在「{s}」之後'
-    return None
+            return f'距離 {left} 的下一場比賽「{tour}」對上 {right} 就在「{s}」之後'
+
+        return f'{left} 正在「{tour}」與 {right} 進行對戰！'
+
+    return f'沒有找到 {player} 最近的比賽 QQ'
