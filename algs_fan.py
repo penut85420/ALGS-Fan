@@ -98,6 +98,10 @@ class ALGSFan(commands.Bot):
     async def pos(self, ctx):
         await ctx.send('星途(Path of Star) - 臺灣《星海爭霸II》募資邀請賽 https://www.zeczec.com/projects/pathofstar')
 
+    @commands.command(name='line')
+    async def cmd_line(self, ctx):
+        await ctx.send('臺灣星海匿名 Line 社群永遠歡迎新的指揮官 ➡️ https://algssc2.pse.is/twscline')
+
     @commands.command(name='召喚')
     async def cmd_summon(self, ctx, *arg):
         player = ' '.join(arg).strip()
