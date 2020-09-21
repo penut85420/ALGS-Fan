@@ -1,4 +1,5 @@
 import os
+import re
 import pickle
 import datetime
 
@@ -51,7 +52,7 @@ class TWSCCalendar:
 
         begin_idx = desc.find(begin_token) + len(begin_token)
         end_idx = desc.find(end_token)
-        desc = desc[begin_idx:end_idx].strip().replace('\n', ' ')
+        desc = re.sub(r'<[^<>]*>', '', desc[begin_idx:end_idx].replace('<br>', ' ').replace('\n', ' ')).strip()
 
         return desc
 
