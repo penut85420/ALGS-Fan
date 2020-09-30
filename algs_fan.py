@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import asyncio
 import threading
 import datetime as dt
@@ -26,6 +27,7 @@ class ALGSFan(commands.Bot):
             initial_channels=list(self.channel_list)
         )
         self.tc = TWSCCalendar()
+        self.samatch_str = json.load(open('./samatch.json', 'r', encoding='UTF-8'))
 
     def log(self, msg):
         self.logfile.info(msg.replace('\n', ' '))
@@ -85,6 +87,14 @@ class ALGSFan(commands.Bot):
     @commands.command(name='報名')
     async def sign(self, ctx):
         await ctx.send(self.tc.get_next_sign())
+    
+    @commands.command(name='samatch')
+    async def samatch(self, ctx):
+        await ctx.send(self.samatch_str['samatch'])
+
+    @commands.command(name='pov')
+    async def pov(self, ctx):
+        await ctx.send(self.samatch_str['pov'])
 
     @commands.command(name='hello', aliases=['哈囉'])
     async def testing(self, ctx):
