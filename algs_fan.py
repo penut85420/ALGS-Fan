@@ -106,7 +106,11 @@ class ALGSFan(commands.Bot):
 
     @commands.command(name='星途', aliases=['pos'])
     async def pos(self, ctx):
-        await ctx.send('星途(Path of Star) - 臺灣《星海爭霸II》募資邀請賽 https://www.zeczec.com/projects/pathofstar')
+        await ctx.send(
+            '【星途(Path of Star)】臺灣《星海爭霸II》募資積分邀請賽\n'
+            '募資頁面 - https://www.zeczec.com/projects/pathofstar\n'
+            '選手積分狀況 - https://algssc2.pse.is/possheets'
+        )
 
     @commands.command(name='line')
     async def cmd_line(self, ctx):
