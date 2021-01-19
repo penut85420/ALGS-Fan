@@ -63,7 +63,10 @@ class TWSCCalendar:
 
     def get_date(self, e, key):
         date = e[key].get('dateTime', e[key].get('date'))
-        date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S+08:00')
+        try:
+            date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S+08:00')
+        except ValueError:
+            date = datetime.datetime.strptime(date, '%Y-%m-%d')
         date = date - datetime.timedelta(hours=8)
 
         return date
