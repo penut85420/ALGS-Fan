@@ -55,7 +55,7 @@ class ALGSFan(commands.Bot):
                         await ch.send(msg)
                 await asyncio.sleep(2400)
 
-        tasks = [timer_next_event, timer_next_sign]
+        tasks = [timer_next_event]
         for i, t in enumerate(tasks):
             tasks[i] = asyncio.create_task(t())
 
@@ -214,8 +214,8 @@ def set_logger():
     logger.add(sys.stderr, level='INFO', format=log_format)
     logger.add(
         f'./logs/algs.log',
-        rotation='7 day',
-        retention='30 days',
+        rotation='1 day',
+        retention='1 days',
         level='INFO',
         encoding='UTF-8',
         format=log_format
