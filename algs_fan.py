@@ -10,6 +10,7 @@ from loguru import logger
 from twitchio.ext import commands
 from twitchio.ext.commands.errors import CommandNotFound
 from twsc_calendar import TWSCCalendar
+from google_sheet import NiceSheet
 from liquipedia import search_next
 
 class ALGSFan(commands.Bot):
@@ -27,6 +28,7 @@ class ALGSFan(commands.Bot):
             initial_channels=list(self.channel_list)
         )
         self.tc = TWSCCalendar()
+        self.nc = NiceSheet()
         self.samatch_str = json.load(open('./samatch.json', 'r', encoding='UTF-8'))
 
     def log(self, msg):
@@ -87,7 +89,7 @@ class ALGSFan(commands.Bot):
     @commands.command(name='報名')
     async def sign(self, ctx):
         await ctx.send(self.tc.get_next_sign())
-    
+
     @commands.command(name='samatch')
     async def samatch(self, ctx):
         await ctx.send(self.samatch_str['samatch'])
@@ -128,15 +130,7 @@ class ALGSFan(commands.Bot):
 
     @commands.command(name='nice')
     async def nice(self, ctx):
-        nice_name = [
-            '死亡鳳凰艦隊提督',
-            '抓放軍團最高統帥',
-            '冰雪風暴靜滯領主',
-            '亞細亞洲璀銀神帝',
-            '極限大師廿八星宿',
-            '四大毒奶堅持天尊'
-        ]
-        await ctx.send(' GivePLZ '.join(nice_name) + ' GivePLZ ')
+        await ctx.send(self.nc.get_msg())
 
     @commands.command(name='nice比賽')
     async def cmd_nice_match(self, ctx):
