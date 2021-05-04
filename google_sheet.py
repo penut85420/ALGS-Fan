@@ -10,7 +10,7 @@ from googleapiclient.discovery import build
 
 class NiceSheet:
     def __init__(self):
-        self.last_idx = None
+        self.last_idx = -1
         self.get_sheet()
         self.update_interval = dt.timedelta(hours=1)
 
@@ -18,14 +18,11 @@ class NiceSheet:
         if dt.datetime.now() - self.last_update > self.update_interval:
             self.get_sheet()
 
-        v = list(range(len(self.values)))
-        idx = random.choice(v)
+        v = len(self.values)
+        self.last_idx += v + 1
+        self.last_idx %= v
 
-        while idx == self.last_idx:
-            idx = random.choice(v)
-        self.last_idx = idx
-
-        return self.values[idx][0]
+        return self.values[self.last_idx][0]
 
     def get_sheet(self):
         spreadsheet_id = os.getenv('SHEET_ID')
