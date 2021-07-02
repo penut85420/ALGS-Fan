@@ -2,15 +2,12 @@ import os
 import sys
 import json
 import asyncio
-import threading
-import datetime as dt
 
-os.environ['LOGURU_AUTOINIT'] = 'False'
 from loguru import logger
 from twitchio.ext import commands
 from twitchio.ext.commands.errors import CommandNotFound
 from twsc_calendar import TWSCCalendar
-from google_sheet import NiceSheet
+from google_sheet import ALGS_Sheet
 from liquipedia import search_next
 
 class ALGSFan(commands.Bot):
@@ -28,7 +25,9 @@ class ALGSFan(commands.Bot):
             initial_channels=list(self.channel_list)
         )
         self.tc = TWSCCalendar()
-        self.nc = NiceSheet()
+        self.sheet_nice = ALGS_Sheet(0, 456357272, 'Nice')
+        self.sheet_rex = ALGS_Sheet(286280759, 2078813387, 'Rex')
+        self.sheet_algs = ALGS_Sheet(848841058, 1658593575, 'ALGS')
         self.samatch_str = json.load(open('./samatch.json', 'r', encoding='UTF-8'))
 
     def log(self, msg):
@@ -46,16 +45,6 @@ class ALGSFan(commands.Bot):
                         msg = self.tc.get_next_event()
                         await ch.send(msg)
                 await asyncio.sleep(1800)
-
-        async def timer_next_sign():
-            while True:
-                for ch, count in self.channel_count.items():
-                    if count >= self.threshold:
-                        self.channel_count[ch] = 0
-                        ch = self.get_channel(ch)
-                        msg = self.tc.get_next_sign()
-                        await ch.send(msg)
-                await asyncio.sleep(2400)
 
         tasks = [timer_next_event]
         for i, t in enumerate(tasks):
@@ -104,14 +93,14 @@ class ALGSFan(commands.Bot):
 
     @commands.command(name='藍兔', aliases=['algs'])
     async def algs(self, ctx):
-        await ctx.send('藍兔電子競技工作室臉書粉絲團 https://www.facebook.com/ALGSSC2/')
+        await ctx.send(self.sheet_algs.get_msg())
 
     @commands.command(name='星途', aliases=['pos'])
     async def pos(self, ctx):
         await ctx.send(
-            '【星途(Path of Star)】臺灣《星海爭霸II》募資積分邀請賽\n'
-            '募資頁面 - https://www.zeczec.com/projects/pathofstar\n'
-            '選手積分狀況 - https://algssc2.pse.is/possheets'
+            '臺灣星海募資社群賽 期待身為社群一份子的你一同加入 \n'
+            '  ｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡ \n'
+            'https://www.zeczec.com/projects/pathofstar'
         )
 
     @commands.command(name='line')
@@ -129,8 +118,8 @@ class ALGSFan(commands.Bot):
         await ctx.send(result)
 
     @commands.command(name='nice')
-    async def nice(self, ctx):
-        await ctx.send(self.nc.get_msg())
+    async def cmd_nice(self, ctx):
+        await ctx.send(self.sheet_nice.get_msg())
 
     @commands.command(name='nice比賽')
     async def cmd_nice_match(self, ctx):
@@ -164,8 +153,8 @@ class ALGSFan(commands.Bot):
         await ctx.send('AZ 大大的臉書粉絲團 https://www.facebook.com/AzureForSC2/')
 
     @commands.command(name='rex')
-    async def rex(self, ctx):
-        await ctx.send('Rex 小雷雷臉書粉絲團 https://www.facebook.com/RexStorMWTF')
+    async def cmd_rex(self, ctx):
+        await ctx.send(self.sheet_rex.get_msg())
 
     @commands.command(name='阿吉')
     async def ahchi(self, ctx):
@@ -209,9 +198,10 @@ def set_logger():
     logger.add(
         f'./logs/algs.log',
         rotation='1 day',
-        retention='1 days',
+        retention='7 days',
         level='INFO',
         encoding='UTF-8',
+        compression='gz',
         format=log_format
     )
 
