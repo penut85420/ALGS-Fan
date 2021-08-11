@@ -46,7 +46,13 @@ class ALGSFan(commands.Bot):
                         await ch.send(msg)
                 await asyncio.sleep(1800)
 
-        tasks = [timer_next_event]
+        async def timer_vpn():
+            while True:
+                ch = self.get_channel('algs_sc2')
+                await ch.send(self.vpn_msg())
+                await asyncio.sleep(30 * 60)
+
+        tasks = [timer_next_event, timer_vpn]
         for i, t in enumerate(tasks):
             tasks[i] = asyncio.create_task(t())
 
@@ -66,6 +72,16 @@ class ALGSFan(commands.Bot):
             self.log(msg)
         else:
             self.log(str(error).replace('\n', ' | '))
+
+    @commands.command(name='vpn')
+    async def vpn(self, ctx):
+        await ctx.send(self.vpn_msg())
+
+    def vpn_msg(self):
+        return (
+            '藍兔面臨財務危機含淚工商辛酸畫面流出 https://surfshark.deals/algsnice'
+            ' 跟著我們一起愛你鯊鯊'
+        )
 
     @commands.command(name='星海比賽', aliases=['比賽', 'b', 'bracket', '賽程', '賽程表'])
     async def calendar(self, ctx):
