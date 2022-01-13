@@ -46,13 +46,25 @@ class ALGSFan(commands.Bot):
                         await ch.send(msg)
                 await asyncio.sleep(1800)
 
-        async def timer_vpn():
+        async def timer_subscribe():
             while True:
-                ch = self.get_channel('algs_sc2')
-                await ch.send(self.vpn_msg())
-                await asyncio.sleep(30 * 60)
+                channel = 'algs_sc2'
+                if self.channel_count[channel] >= self.threshold:
+                    self.channel_count[channel] = 0
+                    ch = self.get_channel(channel)
+                    await ch.send(self.sub_msg())
+                await asyncio.sleep(40 * 60)
 
-        tasks = [timer_next_event, timer_vpn]
+        async def timer_algs_2021():
+            while True:
+                channel = 'algs_sc2'
+                if self.channel_count[channel] >= self.threshold:
+                    self.channel_count[channel] = 0
+                    ch = self.get_channel(channel)
+                    await ch.send(self.anniversary_msg())
+                await asyncio.sleep(50 * 60)
+
+        tasks = [timer_algs_2021, timer_next_event, timer_subscribe]
         for i, t in enumerate(tasks):
             tasks[i] = asyncio.create_task(t())
 
@@ -73,15 +85,30 @@ class ALGSFan(commands.Bot):
         else:
             self.log(str(error).replace('\n', ' | '))
 
-    @commands.command(name='vpn')
-    async def vpn(self, ctx):
-        await ctx.send(self.vpn_msg())
+    @commands.command(name='訂閱')
+    async def sub(self, ctx):
+        await ctx.send(self.sub_msg())
 
-    def vpn_msg(self):
+    def sub_msg(self):
         return (
-            '藍兔面臨財務危機含淚工商辛酸畫面流出 https://surfshark.deals/algsnice'
-            ' 跟著我們一起愛你鯊鯊'
+            '自己頻道自己救 <(_ _)> 一個月只要捐出一杯手搖飲，'
+            '就能夠實質的幫助藍兔製造更多Nice的星海內容！'
+            '還有機會獲得PNY爸爸贊助的大大大優惠，顯卡、記憶體、SSD等你來拿 '
+            'https://algssc2.pse.is/3n9xvm'
         )
+
+    @commands.command(name='藍兔2021')
+    async def algs_2021(self, ctx):
+        await ctx.send(self.anniversary_msg())
+
+    def anniversary_msg(self):
+        return (
+            '【2021 藍兔葉克膜年度大回饋總名單】  '
+            'https://algssc2.pse.is/3vg9nf  '
+            '付費大大們快來核對你的愛心抽獎點數是不是符合唷！'
+            '如果有缺漏請在1/15直播開抽前把付款收據出示給我們 <3'
+        )
+
 
     @commands.command(name='星海比賽', aliases=['比賽', 'b', 'bracket', '賽程', '賽程表'])
     async def calendar(self, ctx):
@@ -114,9 +141,18 @@ class ALGSFan(commands.Bot):
     @commands.command(name='星途', aliases=['pos'])
     async def pos(self, ctx):
         await ctx.send(
-            '臺灣星海募資社群賽 期待身為社群一份子的你一同加入 \n'
+            '臺灣星海募資社群賽 '
+            '期待身為社群一份子的你一同加入 \n'
             '  ｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡ \n'
-            'https://www.zeczec.com/projects/pathofstar'
+            '(社群賽報名表單於網頁下方) '
+            'https://algssc2.pse.is/pos'
+        )
+
+    @commands.command(name='blazing')
+    async def blazing(self, ctx):
+        await ctx.send(
+            '專屬台港澳的1v1聯賽開放報名中 '
+            'https://algssc2.pse.is/bzsosignup'
         )
 
     @commands.command(name='line')
