@@ -1,4 +1,5 @@
 import os
+import re
 import pickle
 import datetime
 
@@ -51,15 +52,20 @@ class TWSCCalendar:
 
         begin_idx = desc.find(begin_token) + len(begin_token)
         end_idx = desc.find(end_token)
+        if end_idx == -1:
+            end_idx = len(desc)
         desc = desc[begin_idx:end_idx].strip().replace('\n', ' ')
 
         return desc
 
     def parse_desc(self, e):
         return self.retrieve_para(e, '📄賽事資訊', '📇')
-    
+
     def parse_sign(self, e):
         return self.retrieve_para(e, '🔗報名連結', '📄')
+
+    def parse_url(self, e):
+        return re.findall("(https?://[^\s]+)", e['description'])
 
     def get_date(self, e, key):
         date = e[key].get('dateTime', e[key].get('date'))
@@ -76,7 +82,7 @@ class TWSCCalendar:
         start = end = title = None
         for e in self.get_events():
             start, end, title = self.parse_event(e)
-            desc = self.parse_desc(e)
+            desc = self.parse_url(e)[0]
 
             if '📺' not in title:
                 continue

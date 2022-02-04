@@ -46,15 +46,6 @@ class ALGSFan(commands.Bot):
                         await ch.send(msg)
                 await asyncio.sleep(1800)
 
-        async def timer_subscribe():
-            while True:
-                channel = 'algs_sc2'
-                if self.channel_count[channel] >= self.threshold:
-                    self.channel_count[channel] = 0
-                    ch = self.get_channel(channel)
-                    await ch.send(self.sub_msg())
-                await asyncio.sleep(40 * 60)
-
         async def timer_algs_2021():
             while True:
                 channel = 'algs_sc2'
@@ -64,7 +55,7 @@ class ALGSFan(commands.Bot):
                     await ch.send(self.anniversary_msg())
                 await asyncio.sleep(50 * 60)
 
-        tasks = [timer_algs_2021, timer_next_event, timer_subscribe]
+        tasks = [timer_algs_2021, timer_next_event]
         for i, t in enumerate(tasks):
             tasks[i] = asyncio.create_task(t())
 
@@ -85,16 +76,11 @@ class ALGSFan(commands.Bot):
         else:
             self.log(str(error).replace('\n', ' | '))
 
-    @commands.command(name='訂閱')
-    async def sub(self, ctx):
-        await ctx.send(self.sub_msg())
-
-    def sub_msg(self):
-        return (
-            '自己頻道自己救 <(_ _)> 一個月只要捐出一杯手搖飲，'
-            '就能夠實質的幫助藍兔製造更多Nice的星海內容！'
-            '還有機會獲得PNY爸爸贊助的大大大優惠，顯卡、記憶體、SSD等你來拿 '
-            'https://algssc2.pse.is/3n9xvm'
+    @commands.command(name='嘖嘖')
+    async def zeczec(self, ctx):
+        await ctx.send(
+            '透過嘖嘖募資能最直接地支持我們製作更多 《星海爭霸II》中文內容 ヽ(・×・´)ゞ\n'
+            'https://algssc2.pse.is/POS'
         )
 
     @commands.command(name='藍兔2021')
@@ -137,16 +123,6 @@ class ALGSFan(commands.Bot):
     @commands.command(name='藍兔', aliases=['algs'])
     async def algs(self, ctx):
         await ctx.send(self.sheet_algs.get_msg())
-
-    @commands.command(name='星途', aliases=['pos'])
-    async def pos(self, ctx):
-        await ctx.send(
-            '臺灣星海募資社群賽 '
-            '期待身為社群一份子的你一同加入 \n'
-            '  ｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡ \n'
-            '(社群賽報名表單於網頁下方) '
-            'https://algssc2.pse.is/pos'
-        )
 
     @commands.command(name='blazing')
     async def blazing(self, ctx):
