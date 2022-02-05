@@ -1,0 +1,36 @@
+{
+    "twitch_bot": {
+        "token": "TWITCH_BOT_ACCESS_TOKEN",
+        "prefix": "COMMAND_PREFIX",
+        "threshold": 10,
+        "main_channel": [
+            "MAIN_CHANNEL_ID"
+        ],
+        "timer": {
+            "anniversary_timer": 10,
+            "next_event_timer": 10,
+            "command_reload": 10
+        },
+        "channels": [
+            "CHANNEL_ID1",
+            "CHANNEL_ID2"
+        ],
+        "sheet_info": [
+            [0, 1, "Name1"],
+            [2, 3, "Name2"],
+            [4, 5, "Name3"]
+        ],
+        "simple_command": {
+            "COMMAND_A": "MESSAGE_A",
+            "COMMAND_B": "MESSAGE_B"
+        }
+    },
+    "calendar_info": {
+        "id": "GOOGLE_CALENDAR_ID",
+        "token": "GOOGLE_CALENDAR_TOKEN"
+    },
+    "sheet_info": {
+        "id": "GOOGLE_SHEET_ID",
+        "token": "GOOGLE_SHEET_TOKEN"
+    }
+}
