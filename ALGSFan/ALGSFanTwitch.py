@@ -18,9 +18,7 @@ class ALGSFan(commands.Bot):
         self.logfile = logfile
         self.verbose = verbose
         self.channel_list = self.config["channels"]
-        self.channel_count = {
-            channel: 0 for channel in self.channel_list
-        }
+        self.channel_count = {channel: 0 for channel in self.channel_list}
         super().__init__(
             token=self.config["token"],
             prefix=self.config["prefix"],
@@ -71,8 +69,8 @@ class ALGSFan(commands.Bot):
         tasks = [
             self.mk_timer_event(
                 self.config["main_channel"],
-                self.anniversary_msg,
-                self.config["timer"]["anniversary_timer"],
+                self.pos_msg,
+                self.config["timer"]["main_channel_timer"],
             ),
             self.mk_timer_event(
                 None,
@@ -129,12 +127,23 @@ class ALGSFan(commands.Bot):
     async def algs_2021(self, ctx):
         await ctx.send(self.anniversary_msg())
 
+    @commands.command(name="支持")
+    async def zeczec_pos(self, ctx):
+        await ctx.send(self.pos_msg())
+
     def anniversary_msg(self):
         return (
             "【2021 藍兔葉克膜年度大回饋總名單】  "
             "https://algssc2.pse.is/3vg9nf  "
             "付費大大們快來核對你的愛心抽獎點數是不是符合唷！"
             "如果有缺漏請在1/15直播開抽前把付款收據出示給我們 <3"
+        )
+
+    def pos_msg(self):
+        return (
+            "星途或許顛簸，但有你的加入，一切將變得更順遂。"
+            "最直接地支持我們製作更多精彩的《星海爭霸II》內容 - "
+            "https://www.zeczec.com/projects/pathofstar"
         )
 
     @commands.command(name="星海比賽", aliases=["比賽", "b", "bracket", "賽程", "賽程表"])
