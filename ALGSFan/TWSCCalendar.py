@@ -6,6 +6,7 @@ from googleapiclient.discovery import build
 from ALGSFan.Utils import load_json, load_token
 
 WEEK_DELTA = datetime.timedelta(days=7)
+WEEK_STR = "一二三四五六日"
 
 
 class TWSCCalendar:
@@ -46,6 +47,27 @@ class TWSCCalendar:
         events = events_result.get("items", [])
 
         return events
+
+    def mk_event(self, e):
+        date, _, title = self.parse_event(e)
+
+        return "%s (%s) %s %s" % (
+            date.strftime("%m/%d"),
+            WEEK_STR[date.weekday()],
+            date.strftime("%H:%M"),
+            title,
+        )
+
+    def get_recent_events(self):
+        return "\n".join([self.mk_event(e) for e in self.get_events()])
+
+    def get_recent_sign(self):
+        events = [self.mk_event(e) for e in self.get_events()]
+        results = []
+        for event in events:
+            if "📜" in event:
+                results.append(event)
+        return "\n".join(results)
 
     def parse_event(self, e):
         title = e["summary"].replace("[SC2] ", "")
