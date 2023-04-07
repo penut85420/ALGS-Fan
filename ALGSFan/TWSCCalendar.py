@@ -77,6 +77,9 @@ class TWSCCalendar:
         return start, end, title
 
     def retrieve_para(self, e, begin_token, end_token):
+        if "description" not in e:
+            return ""
+
         desc = e["description"]
 
         begin_idx = desc.find(begin_token) + len(begin_token)
@@ -94,7 +97,11 @@ class TWSCCalendar:
         return self.retrieve_para(e, "🔗報名連結", "📄")
 
     def parse_url(self, e):
-        return re.findall("(https?://[^\s]+)", e["description"])
+        if "description" in e:
+            return re.findall("(https?://[^\s]+)", e["description"])
+        if "location" in e:
+            return (e["location"],)
+        return ("",)
 
     def get_date(self, e, key):
         date = e[key].get("dateTime", e[key].get("date"))
@@ -145,7 +152,7 @@ class TWSCCalendar:
         now = datetime.datetime.utcnow()
         is_found = False
         for e in self.get_events():
-            start, end, title = self.parse_event(e)
+            start, _, title = self.parse_event(e)
             desc = self.parse_sign(e)
 
             if "📜" not in title:

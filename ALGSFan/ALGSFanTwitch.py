@@ -162,7 +162,9 @@ class ALGSFan(commands.Bot):
     async def testing(self, ctx):
         await ctx.send(f"{ctx.author.name} 你好啊!")
 
-    @commands.command(name="藍兔", aliases=["algs"])
+    @commands.command(
+        name="藍兔", aliases=["algs", "dc", "dis", "link", "連結", "歐付寶", "donate"]
+    )
     async def algs(self, ctx):
         await ctx.send(self.sheet_algs.get_msg())
 
